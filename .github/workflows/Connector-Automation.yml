@@ -1,0 +1,34 @@
+name: Connector creations
+on:
+  workflow_dispatch:
+    inputs:
+      myTextInput:
+        description: 'Text input to be written to JSON file'
+        required: true
+        default: ''
+      choice:
+        type: choice
+        description: Please select the environment where u want to create the connector
+        options:
+        - dev
+        - qa
+        - prod
+jobs:
+  form-user-payload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Write input to JSON file
+        run: |
+          echo "{ \"input\": \"${{ github.event.inputs.myTextInput }}\" }" > input.json
+         # echo "${{ github.event.inputs.myTextInput }}" > input.json
+      - name: Set JSON content as output
+        id: json_output
+        run: |
+          content=$(cat input.json)
+          echo "::set-output name=json_content::$content"
+
+      - name: Use JSON content
+        run: |
+          echo "JSON content: ${{ steps.json_output.outputs.json_content }}"
